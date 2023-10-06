@@ -31,24 +31,24 @@ services:
   # ------------------------------------------------------------------------------------
   # Influxdb
   # ------------------------------------------------------------------------------------
-  influxdb:
+  influx:
     # image: influxdb:1.7.11
     image: influxdb:latest
-    container_name: influxdb
-    restart: unless-stopped
+    # image: influxdb:2.0
+    restart: always
     ports:
-        - '8086'
+        - "8086:8086"
     volumes:
-        - influxdb-data:/var/lib/influxdb
-        - influxdb-etc:/etc/influxdb
+        - influxdb-data:/var/lib/influxdb2
+        - influxdb-config:/etc/influxdb2
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup 
-      - DOCKER_INFLUXDB_INIT_USERNAME=balena
-      - DOCKER_INFLUXDB_INIT_PASSWORD=balenabalena
-      - DOCKER_INFLUXDB_INIT_ORG=balena 
-      - DOCKER_INFLUXDB_INIT_BUCKET=balena
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=balena
-      - DOCKER_INFLUXDB_INIT_RETENTION=1d   
+      DOCKER_INFLUXDB_INIT_MODE: setup 
+      DOCKER_INFLUXDB_INIT_ORG: balena 
+      DOCKER_INFLUXDB_INIT_BUCKET: balena
+      DOCKER_INFLUXDB_INIT_USERNAME: balena
+      DOCKER_INFLUXDB_INIT_PASSWORD: balenabalena
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: PB0Pjh4_iou_uNkww4unb-WkGQ-tTe3KoWbUsb4O9rlxOhuj3kgkhD7tH1jXZxzleNob8WzONGbh0tM1SjHQWQ==
+      INFLUXDB_DB: hivemq
 
 
   # ------------------------------------------------------------------------------------
@@ -63,37 +63,66 @@ services:
     volumes:
         - "grafana-data:/data"
   
+  # ------------------------------------------------------------------------------------
+  # Node-RED
+  # ------------------------------------------------------------------------------------
+  node-red:
+    image: bh.cr/balenalabs/balena-node-red-amd64
+    container_name: node-red
+    privileged: true
+    restart: unless-stopped
+    volumes:
+        - 'node-red-data:/data'
+    labels:
+        io.balena.features.dbus: '1'
+        io.balena.features.sysfs: '1'
+        io.balena.features.supervisor-api: '1'
+        io.balena.features.balena-api: '1'
+    ports:
+        - 80:80
+    environment:
+        PORT: 80
+        USERNAME: "balena"
+        PASSWORD: "balena"
+        ENCRIPTION_KEY: "balena"        
+    cap_add:
+        - SYS_RAWIO
+    devices:
+        - "/dev/mem:/dev/mem"
+        - "/dev/gpiomem:/dev/gpiomem"
+        - "/dev/i2c-1:/dev/i2c-1"
+  
 
   # ------------------------------------------------------------------------------------
   # Ignition Edge Server software
   # ------------------------------------------------------------------------------------
-  ignition:
-    #image: inductiveautomation/ignition:latest
-    build: ./ignition
-    ports:
-      - "9088:8088"
-      - "8043:8043"
-      - "8060:8060"
-    volumes:
-      - ignition-data:/usr/local/bin/ignition/data
-    cap_add:
-      - SYS_RAWIO
-    environment:
-      - ACCEPT_IGNITION_EULA=Y
-      - GATEWAY_ADMIN_USERNAME=admin
-      - GATEWAY_ADMIN_PASSWORD=balena
-      - IGNITION_EDITION=edge
-    command: >
-      -n Ignition-supp-66195
-    privileged: true
+  #ignition:
+  #  #image: inductiveautomation/ignition:latest
+  #  build: ./ignition
+  #  ports:
+  #    - "9088:8088"
+  #    - "8043:8043"
+  #    - "8060:8060"
+  #  volumes:
+  #    - ignition-data:/usr/local/bin/ignition/data
+  #  cap_add:
+  #    - SYS_RAWIO
+  #  environment:
+  #    - ACCEPT_IGNITION_EULA=Y
+  #    - GATEWAY_ADMIN_USERNAME=balena
+  #    - GATEWAY_ADMIN_PASSWORD=balena
+  #    - IGNITION_EDITION=edge
+  #  command: >
+  #    -n Ignition-supp-66195
+  #  privileged: true
   
   
 volumes:
   hivemq_data:
   hivemq_log:
   hivemq_license:
-  ignition-data:
+  #ignition-data:
   grafana-data:
   influxdb-data:
-  influxdb-etc:
-
+  influxdb-config:
+  node-red-data:

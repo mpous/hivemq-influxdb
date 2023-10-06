@@ -45,17 +45,17 @@ RUN set -x \
 
 COPY --from=unpack /opt/hivemq-${HIVEMQ_VERSION} /opt/hivemq-${HIVEMQ_VERSION}
 COPY config.xml /opt/hivemq-${HIVEMQ_VERSION}/conf
+COPY logback.xml /opt/hivemq-${HIVEMQ_VERSION}/conf
 COPY bridge-configuration.xml /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-bridge-extension
 COPY docker-entrypoint.sh /opt/docker-entrypoint.sh
 COPY entrypoints.d/* /docker-entrypoint.d/
 
-# https://github.com/hivemq/hivemq-influxdb-extension
-RUN mkdir /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-influxdb-extension
-COPY influxdb.properties /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-influxdb-extension
 
 # https://github.com/hivemq/hivemq-sparkplug-influxdb-extension
 RUN mkdir /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension
-COPY sparkplug.properties /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension
+COPY hivemq-sparkplug-extension/hivemq-extension.xml /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension
+COPY hivemq-sparkplug-extension/hivemq-sparkplug-extension-1.0.0-beta.jar /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension
+COPY hivemq-sparkplug-extension/sparkplug.properties /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension
 
 
 RUN ln -s /opt/hivemq-${HIVEMQ_VERSION} /opt/hivemq \
@@ -63,10 +63,14 @@ RUN ln -s /opt/hivemq-${HIVEMQ_VERSION} /opt/hivemq \
     && useradd -g hivemq -d /opt/hivemq -s /bin/bash --uid ${HIVEMQ_UID} hivemq \
     && chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/conf/config.xml \
     && chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/conf/config.xml \
+    && chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/conf/logback.xml \
+    && chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/conf/logback.xml \
     && chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-bridge-extension/bridge-configuration.xml \
     && chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-bridge-extension/bridge-configuration.xml \
-    && chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-influxdb-extension/influxdb.properties \
-    && chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-influxdb-extension/influxdb.properties \
+    #&& chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension/sparkplug.properties \
+    #&& chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension/sparkplug.properties \
+    && chgrp 0 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension/hivemq-extension.xml \
+    && chmod 770 /opt/hivemq-${HIVEMQ_VERSION}/extensions/hivemq-sparkplug-extension/hivemq-extension.xml \
     && chgrp 0 /opt/hivemq \
     && chmod 770 /opt/hivemq \
     && chmod +x /opt/hivemq/bin/run.sh /opt/docker-entrypoint.sh

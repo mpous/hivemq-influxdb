@@ -128,26 +128,33 @@ fi
 
 
 # INFLUXDB EXTENSION
-echo "######### Check InfluxDB Extension #########"
+# echo "######### Check InfluxDB Extension #########"
 
-if [[ -n "${HIVEMQ_INFLUXDB_ADDRESS}" ]]; then
-  echo "Enabling InfluxDB Extension Address from balenaCloud Device Variables."
-  sed -i "s|HIVEMQ_INFLUXDB_ADDRESS|${HIVEMQ_INFLUXDB_ADDRESS}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
-fi
+# if [[ -n "${HIVEMQ_INFLUXDB_ADDRESS}" ]]; then
+#   echo "Enabling InfluxDB Extension Address from balenaCloud Device Variables."
+#   sed -i "s|HIVEMQ_INFLUXDB_ADDRESS|${HIVEMQ_INFLUXDB_ADDRESS}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
+# fi
 
-if [[ -n "${HIVEMQ_INFLUXDB_PORT}" ]]; then
-  echo "Enabling InfluxDB Extension Port from balenaCloud Device Variables."
-  sed -i "s|HIVEMQ_INFLUXDB_PORT|${HIVEMQ_INFLUXDB_PORT}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
-fi
+# if [[ -n "${HIVEMQ_INFLUXDB_PORT}" ]]; then
+#   echo "Enabling InfluxDB Extension Port from balenaCloud Device Variables."
+#   sed -i "s|HIVEMQ_INFLUXDB_PORT|${HIVEMQ_INFLUXDB_PORT}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
+# fi
 
-if [[ -n "${HIVEMQ_INFLUXDB_DATABASE}" ]]; then
-  echo "Enabling InfluxDB Extension Database from balenaCloud Device Variables."
-  sed -i "s|HIVEMQ_INFLUXDB_DATABASE|${HIVEMQ_INFLUXDB_DATABASE}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
-fi
+# if [[ -n "${HIVEMQ_INFLUXDB_DATABASE}" ]]; then
+#   echo "Enabling InfluxDB Extension Database from balenaCloud Device Variables."
+#   sed -i "s|HIVEMQ_INFLUXDB_DATABASE|${HIVEMQ_INFLUXDB_DATABASE}|" /opt/hivemq/extensions/hivemq-influxdb-extension/influxdb.properties
+# fi
+
 
 # INFLUXDB SPARKPLUG EXTENSION
 # https://github.com/hivemq/hivemq-sparkplug-influxdb-extension
 echo "######### Check Influx Sparkplug Extension #########"
+
+# Enable sparkplug extensions if you are going to use the HiveMQ Sparkplug InfluxDB Extension
+if [[ "${HIVEMQ_SPARKPLUG_EXTENSION}" == "true" ]]; then
+    echo "Enabling the sparkplug extension"
+    rm /opt/hivemq/extensions/hivemq-sparkplug-extension/DISABLED || true
+fi
 
 if [[ -n "${HIVEMQ_SPARKPLUG_MODE}" ]]; then
   echo "Enabling SPARKPLUG Extension Mode from balenaCloud Device Variables."

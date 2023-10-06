@@ -33,6 +33,14 @@ data:
     - HIVEMQ_SPARKPLUG_TOKEN: "token"
     - HIVEMQ_SPARKPLUG_BUCKET: "hivemq"
     - HIVEMQ_SPARKPLUG_ORGANIZATION: "hivemq"
+    - HIVEMQ_SPARKPLUG_EXTENSION: "true"
+    - DOCKER_INFLUXDB_INIT_MODE: "setup"
+    - DOCKER_INFLUXDB_INIT_USERNAME: "balena"
+    - DOCKER_INFLUXDB_INIT_PASSWORD: "balenabalena"
+    - DOCKER_INFLUXDB_INIT_ORG: "balena"
+    - DOCKER_INFLUXDB_INIT_BUCKET: "balena"
+    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "balena"
+    - DOCKER_INFLUXDB_INIT_RETENTION: "1d"
   defaultDeviceType: genericx86-64-ext
   supportedDeviceTypes:
     - genericx86-64-ext
